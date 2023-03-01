@@ -34,9 +34,12 @@ export class fuzzySelectEntryFromJson extends FuzzySuggestModal<Reference> {
 	// Function used to move the cursor in the search bar when the modal is launched
 	focusInput() {
 		//@ts-ignore
-		document.getElementsByClassName("prompt-input")[0].focus();
+		// Fix the popup is not loading when calling from a popup window
+		// document.getElementsByClassName("prompt-input")[0].focus();
+
 	}
 	async onOpen() {
+		// console.log("Test on open");
 		if (Platform.isDesktopApp) {
 			this.focusInput();
 		}
@@ -136,7 +139,8 @@ export class fuzzySelectEntryFromJson extends FuzzySuggestModal<Reference> {
 			tags: [],
 			zoteroTags: [],
 		};
-		bibtexArray.unshift(selectLibrary);
+		// remove update the whole library
+		// bibtexArray.unshift(selectLibrary);
 		// 	]
 
 		this.selectArray = bibtexArray;

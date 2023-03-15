@@ -1,7 +1,7 @@
 import MyPlugin from "./main";
 import * as fs from "fs";
 import { App, Modal, FuzzySuggestModal, Notice, Platform } from "obsidian";
-
+import {MarkdownSourceView, MarkdownView} from 'obsidian';
 import { Reference, AnnotationElements } from "./types";
 
 import {
@@ -31,6 +31,15 @@ export class fuzzySelectEntryFromJson extends FuzzySuggestModal<Reference> {
 		super(app);
 		this.plugin = plugin;
 	}
+
+	get editor(): CodeMirror.Editor {
+		const view = this.app.workspace.activeLeaf.view;
+		if (!(view instanceof MarkdownView)) return null;
+	
+		const sourceView = view.sourceMode;
+		return (sourceView as MarkdownSourceView).cmEditor;
+	  }
+
 	// Function used to move the cursor in the search bar when the modal is launched
 	focusInput() {
 		//@ts-ignore
@@ -40,6 +49,7 @@ export class fuzzySelectEntryFromJson extends FuzzySuggestModal<Reference> {
 	}
 	async onOpen() {
 		// console.log("Test on open");
+
 		if (Platform.isDesktopApp) {
 			this.focusInput();
 		}
@@ -197,6 +207,9 @@ export class fuzzySelectEntryFromJson extends FuzzySuggestModal<Reference> {
 
 			//Create and export Note for select reference
 			this.plugin.createNote(selectedEntry, this.data);
+			// console.log(selectedEntry);
+			// this.editor.replaceRange(content, this.editor.getCursor());
+			this.editor.replaceRange('[[@'+selectedEntry.citeKey+']]', this.editor.getCursor());
 
 			//if the note is the last one to be processed, then open it
 			if (indexNoteToBeProcessed == citeKeyToBeProcessed.length - 1) {
